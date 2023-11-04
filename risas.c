@@ -62,16 +62,19 @@ get_fmt()
 int main(int argc, char *argv[])
 {
   // 0. preprocess the option
+  // 0.1 show help info
   if (argc <= 1) {
     usage(argv[0]);
     exit(ERR_ARG);
   }
-  // check whether the source file path is correct
+  // 0.2 check whether the source file path is correct
   if ((fp = fopen(argv[1], FILE_RD)) == NULL) {
     fprintf(stderr, "%s: can't open %s, please make sure the pid you typed exists\n", argv[0], argv[1]);
     exit(ERR_FILE);
   }
-  // determine output file format when command is not complete
+
+  // 1. determine output file format
+  // 1.1 command is not complete
   if (argc <= 2) {
     if(!(out_fmt = get_fmt())) {
       fprintf(stderr, "%s: the option you typed in is incorrect\n", argv[0]);
@@ -79,14 +82,14 @@ int main(int argc, char *argv[])
       exit(ERR_ARG);
     }
   }
+  // 1.2 handle the third argument
   if (argc > 3 || strlen(argv[2]) != 3 || *argv[2] != '-' || *(argv[2] + 1) != 'f') {
     usage(argv[0]);
     fclose(fp);
     exit(ERR_ARG);
   }
-
-  // the command is entered correctly
-  // extract from the arguments
+  // then I know the command is entered correctly
+  // 1.3 extract output format from the argument
   switch (*(argv[2] + 2)) {
     case '1':
       out_fmt = OUT_HEXB;
@@ -106,7 +109,10 @@ int main(int argc, char *argv[])
 
   // printf("the choice is %d\n", out_fmt);
 
-  // 1. first traverse to get all tags
+  // 2. first traverse to get all tags
+  if (fp) {
+  
+  }
 
   // input from stdin
   // if (argc > 2) {
