@@ -1,0 +1,20 @@
+addi r1, r0, 2
+addi r2, r0, 3
+add  r3, r1, r2
+
+sw   r3, 4(r0)
+lw   r4, 4(r0)
+nop
+
+addi r5, r0, 160
+
+loop:
+slli r4, r4, 1
+lw   r6, 4(r0)
+
+# jump out
+bge  r4, r5, 8
+# jump to loop
+jar  r0, -12
+
+nop
