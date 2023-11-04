@@ -13,22 +13,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#define FILE_RD  "r"
-#define FILE_WRT "w"
-#define FILE_APD "a"
-
-#define ERR_ARG  1
-#define ERR_FILE 2
-
-// format of output file
-#define OUT_HEXB  1
-#define OUT_HEX   2
-#define OUT_BIN   3
+#include "risas.h"
 
 // variables
 static FILE *fp; // file pointer to source file
 static int out_fmt; // output file format
+static char line[MAX_SIZ];
 
 static void
 usage_fmt()
@@ -77,7 +67,7 @@ int main(int argc, char *argv[])
   // 1.1 command is not complete
   if (argc <= 2) {
     if(!(out_fmt = get_fmt())) {
-      fprintf(stderr, "%s: the option you typed in is incorrect\n", argv[0]);
+      fprintf(stderr, "%s: the option you typed in is incorrect[1/2/3]\n", argv[0]);
       fclose(fp);
       exit(ERR_ARG);
     }
@@ -101,7 +91,7 @@ int main(int argc, char *argv[])
       out_fmt = OUT_BIN;
       break;
     default:
-      fprintf(stderr, "%s: the argument you typed in is incorrect\n", argv[0]);
+      fprintf(stderr, "%s: the output format you typed in is incorrect[1/2/3]\n", argv[0]);
       fclose(fp);
       exit(ERR_ARG);
       break;
@@ -110,15 +100,15 @@ int main(int argc, char *argv[])
   // printf("the choice is %d\n", out_fmt);
 
   // 2. first traverse to get all tags
-  if (fp) {
-  
+  while ((fscanf(fp, "%[^\r\n]\n", line)) != EOF) {
+    printf("%s\n", line);
   }
 
   // input from stdin
   // if (argc > 2) {
   // }
 
-  // Clean up
+  // clean up
   fclose(fp);
 
   return EXIT_SUCCESS;
