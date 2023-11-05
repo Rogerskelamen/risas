@@ -14,11 +14,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include "risas.h"
+#include "common.h"
 
 // variables
 static FILE *fp; // file pointer to source file
 static int out_fmt; // output file format
 static char line[MAX_SIZ];
+static int line_cnt = 0;
 
 static void
 usage_fmt()
@@ -71,38 +73,41 @@ int main(int argc, char *argv[])
       fclose(fp);
       exit(ERR_ARG);
     }
-  }
-  // 1.2 handle the third argument
-  if (argc > 3 || strlen(argv[2]) != 3 || *argv[2] != '-' || *(argv[2] + 1) != 'f') {
+  // 1.2 third argument may not correct
+  } else if (argc > 3 || strlen(argv[2]) != 3 || *argv[2] != '-' || *(argv[2] + 1) != 'f') {
     usage(argv[0]);
     fclose(fp);
     exit(ERR_ARG);
-  }
+  } else {
   // then I know the command is entered correctly
   // 1.3 extract output format from the argument
-  switch (*(argv[2] + 2)) {
-    case '1':
-      out_fmt = OUT_HEXB;
-      break;
-    case '2':
-      out_fmt = OUT_HEX;
-      break;
-    case '3':
-      out_fmt = OUT_BIN;
-      break;
-    default:
-      fprintf(stderr, "%s: the output format you typed in is incorrect[1/2/3]\n", argv[0]);
-      fclose(fp);
-      exit(ERR_ARG);
-      break;
+    switch (*(argv[2] + 2)) {
+      case '1':
+        out_fmt = OUT_HEXB;
+        break;
+      case '2':
+        out_fmt = OUT_HEX;
+        break;
+      case '3':
+        out_fmt = OUT_BIN;
+        break;
+      default:
+        fprintf(stderr, "%s: the output format you typed in is incorrect[1/2/3]\n", argv[0]);
+        fclose(fp);
+        exit(ERR_ARG);
+        break;
+    }
   }
 
   // printf("the choice is %d\n", out_fmt);
 
-  // 2. first traverse to get all tags
-  while ((fscanf(fp, "%[^\r\n]\n", line)) != EOF) {
-    printf("%s\n", line);
+  // 2. traverse for first time to get all tags
+  while ((fgets(line, MAX_SIZ, fp)) != NULL) { // TODO: handle the line exceeds MAX_SIZ
+    line_cnt++;
+    printf("%s", line);
   }
+
+  printf("line count: %d\n", line_cnt);
 
   // input from stdin
   // if (argc > 2) {
