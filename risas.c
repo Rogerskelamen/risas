@@ -13,8 +13,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "risas.h"
 #include "common.h"
+#include "tags.h"
 
 // variables
 static FILE *fp; // file pointer to source file
@@ -104,10 +104,12 @@ int main(int argc, char *argv[])
   // 2. traverse for first time to get all tags
   while ((fgets(line, MAX_SIZ, fp)) != NULL) { // TODO: handle the line exceeds MAX_SIZ
     line_cnt++;
-    printf("%s", line);
+    if (prep_ln(line)) {
+      printf("%s", line);
+    }
   }
 
-  printf("line count: %d\n", line_cnt);
+  printf("\nline count: %d\n", line_cnt);
 
   // input from stdin
   // if (argc > 2) {
