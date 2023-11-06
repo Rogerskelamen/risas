@@ -10,8 +10,9 @@
 #define FILE_APD "a"
 
 // error numbers
-#define ERR_ARG  1
-#define ERR_FILE 2
+#define ERR_ARG   1
+#define ERR_FILE  2
+#define ERR_ALLOC 3
 
 // formats of output file
 #define OUT_HEXB  1

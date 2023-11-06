@@ -22,6 +22,7 @@ static int out_fmt; // output file format
 static char line[MAX_SIZ];
 static int line_cnt = 0; // line number
 static int code_cnt = 0; // code number
+static Tag *tag_ls = NULL; // link list of tags
 
 static void
 usage_fmt()
@@ -106,8 +107,20 @@ int main(int argc, char *argv[])
   while ((fgets(line, MAX_SIZ, fp)) != NULL) { // TODO: handle the line exceeds MAX_SIZ
     line_cnt++;
     if (prep_ln(line)) {
+
+      // 2.1 store tags
       if (istag(line)) {
-        
+        if (tag_ls != NULL) {
+          if(tag_append(tag_ls, line, code_cnt + 1)) {
+            fprintf(stderr, "%s: tag allocation failed!\n", argv[0]);
+            exit(ERR_ALLOC);
+          }
+        } else {
+          if (tag_alloc(&tag_ls, line, code_cnt + 1)) {
+            fprintf(stderr, "%s: tag allocation failed!\n", argv[0]);
+            exit(ERR_ALLOC);
+          }
+        }
       }else {
         code_cnt++;
       }

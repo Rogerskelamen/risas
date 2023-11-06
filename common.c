@@ -81,6 +81,7 @@ istag(char *code)
   }while (*code++);
 
   if (*(code - 1) == ':') {
+    *(code - 1) = '\0'; // splite to tag only
     return 1;
   }
   return 0;

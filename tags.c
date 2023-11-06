@@ -8,7 +8,7 @@
 // 1 if allocation fails
 // 0 otherwise
 int
-tag_alloc(Tag **tag, char *name, int nline)
+tag_alloc(Tag **tag, char *name, int ncode)
 {
   if((*tag = (Tag *)malloc(sizeof(Tag))) == NULL) {
     return 1;
@@ -19,11 +19,15 @@ tag_alloc(Tag **tag, char *name, int nline)
   }
   strcpy(tname, name);
   (*tag)->name = tname;
-  (*tag)->nline = nline;
+  (*tag)->ncode = ncode;
   (*tag)->next = NULL;
   return 0;
 }
 
+// #append a tag to head node#
+// @return:
+// 1 if allocation fails
+// 0 otherwise
 int
 tag_append(Tag *head, char *name, int nline)
 {
@@ -50,7 +54,7 @@ tag_find(Tag *head, char *name)
 {
   while (head != NULL) {
     if (!strcmp(head->name, name)) {
-      return head->nline;
+      return head->ncode;
     }
     head = head->next;
   }
