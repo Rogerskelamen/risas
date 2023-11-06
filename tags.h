@@ -9,6 +9,8 @@ typedef struct tag {
   struct tag *next; // pointer to next node
 }Tag;
 
-int tag_alloc(Tag **tag, char *name, int ncode);
-int tag_find(Tag *head, char *name);
-int tag_append(Tag *head, char *name, int ncode);
+int  tag_alloc(Tag **tag, char *name, int ncode);
+void tag_dealloc(Tag *head);
+int  tag_find(Tag *head, char *name);
+int  tag_append(Tag *head, char *name, int ncode);
+void tag_show(Tag *head);

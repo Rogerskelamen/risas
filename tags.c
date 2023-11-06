@@ -24,6 +24,19 @@ tag_alloc(Tag **tag, char *name, int ncode)
   return 0;
 }
 
+// #deallocate memory for entire tag link list#
+void
+tag_dealloc(Tag *head)
+{
+  Tag *next;
+  while (head != NULL) {
+    next = head->next;
+    free(head->name);
+    free(head);
+    head = next;
+  }
+}
+
 // #append a tag to head node#
 // @return:
 // 1 if allocation fails
@@ -59,4 +72,13 @@ tag_find(Tag *head, char *name)
     head = head->next;
   }
   return 0;
+}
+
+void
+tag_show(Tag *head)
+{
+  while (head != NULL) {
+    printf("{ name: %s, ncode: %d }\n", head->name, head->ncode);
+    head = head->next;
+  }
 }

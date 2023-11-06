@@ -109,6 +109,7 @@ int main(int argc, char *argv[])
     if (prep_ln(line)) {
 
       // 2.1 store tags
+      // every time the line is valid, 
       if (istag(line)) {
         if (tag_ls != NULL) {
           if(tag_append(tag_ls, line, code_cnt + 1)) {
@@ -130,11 +131,14 @@ int main(int argc, char *argv[])
 
   printf("\nline count: %d\n", line_cnt);
 
+  tag_show(tag_ls);
+
   // input from stdin
   // if (argc > 2) {
   // }
 
   // clean up
+  tag_dealloc(tag_ls);
   fclose(fp);
 
   return EXIT_SUCCESS;
