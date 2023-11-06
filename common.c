@@ -41,6 +41,8 @@ trim(char *s)
 // #preprocess the line#
 // delete all comment(comment begin with '#' or ';')
 // trim if there is blank wrapped
+// @args:
+// the line to be processed
 // @return:
 // 0 if it eventually becomes a blank line
 // 1 otherwise
@@ -64,4 +66,22 @@ prep_ln(char *line)
   }
 
   return 1;
+}
+
+// @return:
+// 1 if it's a tag
+// 0 otherwise
+int
+istag(char *code)
+{
+  do {
+    if (*code == ' ' || *code == '\t') {
+      return 0;
+    }
+  }while (*code++);
+
+  if (*(code - 1) == ':') {
+    return 1;
+  }
+  return 0;
 }

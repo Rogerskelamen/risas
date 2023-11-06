@@ -20,5 +20,6 @@
 
 #endif // !COMMON_H
 
-void trim(char *s);
-int prep_ln(char *line);
+void trim(char *);
+int prep_ln(char *);
+int istag(char *);

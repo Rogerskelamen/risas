@@ -20,7 +20,8 @@
 static FILE *fp; // file pointer to source file
 static int out_fmt; // output file format
 static char line[MAX_SIZ];
-static int line_cnt = 0;
+static int line_cnt = 0; // line number
+static int code_cnt = 0; // code number
 
 static void
 usage_fmt()
@@ -105,7 +106,12 @@ int main(int argc, char *argv[])
   while ((fgets(line, MAX_SIZ, fp)) != NULL) { // TODO: handle the line exceeds MAX_SIZ
     line_cnt++;
     if (prep_ln(line)) {
-      printf("%s", line);
+      if (istag(line)) {
+        
+      }else {
+        code_cnt++;
+      }
+      printf("%s\n", line);
     }
   }
 
