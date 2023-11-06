@@ -15,6 +15,7 @@
 #include <string.h>
 #include "common.h"
 #include "tags.h"
+#include "parser.h"
 
 // variables
 static FILE *fp; // file pointer to source file
@@ -109,7 +110,7 @@ int main(int argc, char *argv[])
     if (prep_ln(line)) {
 
       // 2.1 store tags
-      // every time the line is valid, 
+      // every time the line is valid, check if it's a tag
       if (istag(line)) {
         if (tag_ls != NULL) {
           if(tag_append(tag_ls, line, code_cnt + 1)) {
@@ -123,8 +124,27 @@ int main(int argc, char *argv[])
           }
         }
       }else {
+        // it's a common instruction
         code_cnt++;
       }
+    }
+  }
+
+  rewind(fp);
+  // initialize all arguments
+  line_cnt = 0;
+  code_cnt = 0;
+
+  // 3. traverse for second time to parse
+  while ((fgets(line, MAX_SIZ, fp)) != NULL) { // TODO: handle the line exceeds MAX_SIZ
+    line_cnt++;
+    if (prep_ln(line)) {
+
+      if (!istag(line)) {
+        code_cnt++;
+        parse(line);
+      }
+
       printf("%s\n", line);
     }
   }

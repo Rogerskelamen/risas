@@ -22,5 +22,5 @@
 #endif // !COMMON_H
 
 void trim(char *);
-int prep_ln(char *);
-int istag(char *);
+int  prep_ln(char *);
+int  istag(char *);

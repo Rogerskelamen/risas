@@ -2,7 +2,7 @@
 #include <string.h>
 #include "common.h"
 
-// read a line from a file
+// #read a line from a file#
 // if current line is has no content,
 // return 0
 int
@@ -13,7 +13,7 @@ fscanl(FILE *fp, char *line)
   return 0;
 }
 
-// trim the wrapping blanks
+// #trim the wrapping blanks#
 void
 trim(char *s)
 {
