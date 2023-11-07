@@ -50,7 +50,7 @@
 #define   INST_CSRRWI   43
 #define   INST_CSRRSI   44
 #define   INST_CSRRCI   45
-#define   INST_PLCHLD   46
+#define   INST_NOP      46
 
 #endif // !PARSER_H
 

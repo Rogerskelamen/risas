@@ -48,6 +48,7 @@ static INST instref[] = {
   [INST_CSRRWI] = {"csrrwi"},
   [INST_CSRRSI] = {"csrrsi"},
   [INST_CSRRCI] = {"csrrci"},
+  [INST_NOP]    = {"nop"},
 };
 
 // @return:
@@ -64,7 +65,7 @@ isinst(char *code, char *inst)
   }
   *s = '\0';
   printf("%s\n", inst);
-  for (int i = 1; i < INST_PLCHLD - 1; i++) {
+  for (int i = 1; i <= INST_NOP; i++) {
     if (!strcmp(instref[i].name, inst)) {
       return i;
     }
