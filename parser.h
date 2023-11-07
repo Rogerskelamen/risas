@@ -42,20 +42,19 @@
 #define   INST_BGEU     35
 #define   INST_JAL      36
 #define   INST_JALR     37
-#define   INST_FENCE    38
-#define   INST_FENCEI   39
-#define   INST_CSRRW    40
-#define   INST_CSRRS    41
-#define   INST_CSRRC    42
-#define   INST_CSRRWI   43
-#define   INST_CSRRSI   44
-#define   INST_CSRRCI   45
-#define   INST_NOP      46
+#define   INST_CSRRW    38
+#define   INST_CSRRS    39
+#define   INST_CSRRC    40
+#define   INST_CSRRWI   41
+#define   INST_CSRRSI   42
+#define   INST_CSRRCI   43
+#define   INST_NOP      44
 
 #endif // !PARSER_H
 
 typedef struct instr {
   char *name;
+  // int type;
   int opcode;
   int func3;
   int func7;
