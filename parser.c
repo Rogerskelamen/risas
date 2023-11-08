@@ -2,50 +2,51 @@
 #include <string.h>
 #include "parser.h"
 
+// instruction reference
 static INST instref[] = {
-  [INST_LB]     = {"lb",      0b0000011,  0b000,  -1},
-  [INST_LH]     = {"lh",      0b0000011,  0b001,  -1},
-  [INST_LW]     = {"lw",      0b0000011,  0b010,  -1},
-  [INST_LBU]    = {"lbu",     0b0000011,  0b100,  -1},
-  [INST_LHU]    = {"lhu",     0b0000011,  0b101,  -1},
-  [INST_SB]     = {"sb",      0b0100011,  0b000,  -1},
-  [INST_SH]     = {"sh",      0b0100011,  0b001,  -1},
-  [INST_SW]     = {"sw",      0b0100011,  0b010,  -1},
-  [INST_SLL]    = {"sll",     0b0110011,  0b001,  0b0000000},
-  [INST_SLLI]   = {"slli",    0b0010011,  0b001,  0b0000000},
-  [INST_SRL]    = {"srl",     0b0110011,  0b101,  0b0000000},
-  [INST_SRLI]   = {"srli",    0b0010011,  0b101,  0b0000000},
-  [INST_SRA]    = {"sra",     0b0110011,  0b101,  0b0100000},
-  [INST_SRAI]   = {"srai",    0b0010011,  0b101,  0b0100000},
-  [INST_ADD]    = {"add",     0b0110011,  0b000,  0b0000000},
-  [INST_ADDI]   = {"addi",    0b0010011,  0b000,  -1},
-  [INST_SUB]    = {"sub",     0b0110011,  0b000,  0b0100000},
-  [INST_LUI]    = {"lui",     0b0110111,  -1,     -1},
-  [INST_AUIPC]  = {"auipc",   0b0010111,  -1,     -1},
-  [INST_XOR]    = {"xor",     0b0110011,  0b100,  0b0000000},
-  [INST_XORI]   = {"xori",    0b0010011,  0b100,  -1},
-  [INST_OR]     = {"or",      0b0110011,  0b110,  0b0000000},
-  [INST_ORI]    = {"ori",     0b0010011,  0b110,  -1},
-  [INST_AND]    = {"and",     0b0110011,  0b111,  0b0000000},
-  [INST_ANDI]   = {"andi",    0b0010011,  0b111,  -1},
-  [INST_SLT]    = {"slt",     0b0110011,  0b010,  0b0000000},
-  [INST_SLTI]   = {"slti",    0b0010011,  0b010,  -1},
-  [INST_SLTU]   = {"sltu",    0b0110011,  0b011,  0b0000000},
-  [INST_SLTIU]  = {"sltiu",   0b0010011,  0b011,  -1},
-  [INST_BEQ]    = {"beq",     0b1100011,  0b000,  -1},
-  [INST_BNE]    = {"bne",     0b1100011,  0b001,  -1},
-  [INST_BLT]    = {"blt",     0b1100011,  0b100,  -1},
-  [INST_BGE]    = {"bge",     0b1100011,  0b101,  -1},
-  [INST_BLTU]   = {"bltu",    0b1100011,  0b110,  -1},
-  [INST_BGEU]   = {"bgeu",    0b1100011,  0b111,  -1},
-  [INST_JAL]    = {"jal",     0b1101111,  -1,     -1},
-  [INST_JALR]   = {"jalr",    0b1100111,  0b000,  -1},
-  [INST_CSRRW]  = {"csrrw",   0b1110011,  0b001,  -1},
-  [INST_CSRRS]  = {"csrrs",   0b1110011,  0b010,  -1},
-  [INST_CSRRC]  = {"csrrc",   0b1110011,  0b011,  -1},
-  [INST_CSRRWI] = {"csrrwi",  0b1110011,  0b101,  -1},
-  [INST_CSRRSI] = {"csrrsi",  0b1110011,  0b110,  -1},
-  [INST_CSRRCI] = {"csrrci",  0b1110011,  0b111,  -1},
+  [INST_LB]     = {"lb", TYPE_I,      0b0000011,  0b000,  -1},
+  [INST_LH]     = {"lh", TYPE_I,      0b0000011,  0b001,  -1},
+  [INST_LW]     = {"lw", TYPE_I,      0b0000011,  0b010,  -1},
+  [INST_LBU]    = {"lbu", TYPE_I,     0b0000011,  0b100,  -1},
+  [INST_LHU]    = {"lhu", TYPE_I,     0b0000011,  0b101,  -1},
+  [INST_SB]     = {"sb", TYPE_S,      0b0100011,  0b000,  -1},
+  [INST_SH]     = {"sh", TYPE_S,      0b0100011,  0b001,  -1},
+  [INST_SW]     = {"sw", TYPE_S,      0b0100011,  0b010,  -1},
+  [INST_SLL]    = {"sll", TYPE_R,     0b0110011,  0b001,  0b0000000},
+  [INST_SLLI]   = {"slli", TYPE_I,    0b0010011,  0b001,  0b0000000},
+  [INST_SRL]    = {"srl", TYPE_R,     0b0110011,  0b101,  0b0000000},
+  [INST_SRLI]   = {"srli", TYPE_I,    0b0010011,  0b101,  0b0000000},
+  [INST_SRA]    = {"sra", TYPE_R,     0b0110011,  0b101,  0b0100000},
+  [INST_SRAI]   = {"srai", TYPE_I,    0b0010011,  0b101,  0b0100000},
+  [INST_ADD]    = {"add", TYPE_R,     0b0110011,  0b000,  0b0000000},
+  [INST_ADDI]   = {"addi", TYPE_I,    0b0010011,  0b000,  -1},
+  [INST_SUB]    = {"sub", TYPE_R,     0b0110011,  0b000,  0b0100000},
+  [INST_LUI]    = {"lui", TYPE_U,     0b0110111,  -1,     -1},
+  [INST_AUIPC]  = {"auipc", TYPE_U,   0b0010111,  -1,     -1},
+  [INST_XOR]    = {"xor", TYPE_R,     0b0110011,  0b100,  0b0000000},
+  [INST_XORI]   = {"xori", TYPE_I,    0b0010011,  0b100,  -1},
+  [INST_OR]     = {"or", TYPE_R,      0b0110011,  0b110,  0b0000000},
+  [INST_ORI]    = {"ori", TYPE_I,     0b0010011,  0b110,  -1},
+  [INST_AND]    = {"and", TYPE_R,     0b0110011,  0b111,  0b0000000},
+  [INST_ANDI]   = {"andi", TYPE_I,    0b0010011,  0b111,  -1},
+  [INST_SLT]    = {"slt", TYPE_R,     0b0110011,  0b010,  0b0000000},
+  [INST_SLTI]   = {"slti", TYPE_I,    0b0010011,  0b010,  -1},
+  [INST_SLTU]   = {"sltu", TYPE_R,    0b0110011,  0b011,  0b0000000},
+  [INST_SLTIU]  = {"sltiu", TYPE_I,   0b0010011,  0b011,  -1},
+  [INST_BEQ]    = {"beq", TYPE_B,     0b1100011,  0b000,  -1},
+  [INST_BNE]    = {"bne", TYPE_B,     0b1100011,  0b001,  -1},
+  [INST_BLT]    = {"blt", TYPE_B,     0b1100011,  0b100,  -1},
+  [INST_BGE]    = {"bge", TYPE_B,     0b1100011,  0b101,  -1},
+  [INST_BLTU]   = {"bltu", TYPE_B,    0b1100011,  0b110,  -1},
+  [INST_BGEU]   = {"bgeu", TYPE_B,    0b1100011,  0b111,  -1},
+  [INST_JAL]    = {"jal", TYPE_U,     0b1101111,  -1,     -1},
+  [INST_JALR]   = {"jalr", TYPE_I,    0b1100111,  0b000,  -1},
+  [INST_CSRRW]  = {"csrrw", TYPE_C,   0b1110011,  0b001,  -1},
+  [INST_CSRRS]  = {"csrrs", TYPE_C,   0b1110011,  0b010,  -1},
+  [INST_CSRRC]  = {"csrrc", TYPE_C,   0b1110011,  0b011,  -1},
+  [INST_CSRRWI] = {"csrrwi", TYPE_C,  0b1110011,  0b101,  -1},
+  [INST_CSRRSI] = {"csrrsi", TYPE_C,  0b1110011,  0b110,  -1},
+  [INST_CSRRCI] = {"csrrci", TYPE_C,  0b1110011,  0b111,  -1},
   [INST_NOP]    = {"nop"},
 };
 
@@ -79,7 +80,30 @@ isinst(char *code, char *inst)
 int
 getarg(char *code, unsigned int inst_id, INSTVAR *v)
 {
+  switch (instref[inst_id].type) {
+    case TYPE_R:
+      par_r(code, v);
+      break;
+    case TYPE_I:
+      par_i(code, v);
+      break;
+    default:
+      return 0;
+      break;
+  }
   return 0;
+}
+
+int
+par_r(char *code, INSTVAR *v)
+{
+  
+}
+
+int
+par_i(char *code, INSTVAR *v)
+{
+
 }
 
 int

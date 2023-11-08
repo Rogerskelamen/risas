@@ -68,6 +68,9 @@ prep_ln(char *line)
   return 1;
 }
 
+// int
+// splits(char *s, char **)
+
 // @return:
 // 1 if it's a tag
 // 0 otherwise

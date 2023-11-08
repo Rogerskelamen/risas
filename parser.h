@@ -50,15 +50,23 @@
 #define   INST_CSRRCI   43
 #define   INST_NOP      44
 
+// instruction type macros
+#define TYPE_R 1
+#define TYPE_I 2
+#define TYPE_S 3
+#define TYPE_B 4
+#define TYPE_U 5
+#define TYPE_J 6
+#define TYPE_C 7
+
 #endif // !PARSER_H
 
 typedef struct {
   char *name;
-  // int type;
+  int type;
   int opcode;
   int func3;
   int func7;
-  int argc;
 } INST;
 
 typedef struct {
@@ -73,4 +81,6 @@ typedef struct {
 
 int isinst(char *code, char *inst);
 int getarg(char *code, unsigned int inst_id, INSTVAR *v);
+int par_r(char *code, INSTVAR *v);
+int par_i(char *code, INSTVAR *v);
 int parse(char *);
