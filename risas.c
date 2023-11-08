@@ -150,12 +150,15 @@ int main(int argc, char *argv[])
         if (!(inst_id = isinst(line, inst))) {
           fprintf(stderr, "%s: instruction not found!\n", argv[0]);
           fprintf(stderr, "%d: %s\n", line_cnt, line);
-          fprintf(stderr, "\t^\n");
+          fprintf(stderr, "      ^\n");
           exit(ERR_SYNTX);
         }
         if (getarg(line, inst_id, &inst_v)) {
-          
+          fprintf(stderr, "%s: syntax error!\n", argv[0]);
+          fprintf(stderr, "%d: %s\n", line_cnt, line);
+          exit(ERR_SYNTX);
         }
+        show_arg(&inst_v);
         printf("%s\n", inst);
       }
 

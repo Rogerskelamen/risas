@@ -63,7 +63,6 @@ isinst(char *code, char *inst)
     *s++ = *code++;
   }
   *s = '\0';
-  printf("%s\n", inst);
   for (int i = 1; i <= INST_NOP; i++) {
     if (!strcmp(instref[i].name, inst)) {
       return i;
@@ -82,13 +81,14 @@ getarg(char *code, unsigned int inst_id, INSTVAR *v)
 {
   switch (instref[inst_id].type) {
     case TYPE_R:
-      par_r(code, v);
+      if(par_r(code, v))
+        return 1;
       break;
     case TYPE_I:
       par_i(code, v);
       break;
     default:
-      return 0;
+      return 1;
       break;
   }
   return 0;
@@ -97,13 +97,63 @@ getarg(char *code, unsigned int inst_id, INSTVAR *v)
 int
 par_r(char *code, INSTVAR *v)
 {
-  
+  // jump across instruction name
+  while (*code != ' ' && *code != '\t')
+    code++;
+  while (*code == ' ' || *code == '\t')
+    code++;
+
+  // accept rd
+  if (*code != 'r' || *(code + 1) > '9' || *(code + 1) < '0') {
+    return 1; // syntax error: register
+  }
+  v->rd = *(code + 1) - '0';
+
+  // jump across blanks
+  code += 2;
+  while (*code == ' ' || *code == '\t' || *code == ',')
+    code++;
+
+  // accept rs1
+  if (*code != 'r' || *(code + 1) > '9' || *(code + 1) < '0') {
+    return 1; // syntax error: register
+  }
+  v->rs1 = *(code + 1) - '0';
+
+  // jump across blanks
+  code += 2;
+  while (*code == ' ' || *code == '\t' || *code == ',')
+    code++;
+
+  // accept rs2
+  if (*code != 'r' || *(code + 1) > '9' || *(code + 1) < '0') {
+    return 1; // syntax error: register
+  }
+  v->rs2 = *(code + 1) - '0';
+
+  code += 2;
+  if (*code != '\0') {
+    return 1; // syntax error: more args
+  }
+
+  return 0;
 }
 
 int
 par_i(char *code, INSTVAR *v)
 {
+  return 0;
+}
 
+void
+show_arg(INSTVAR *v)
+{
+  printf("{ ");
+  printf("rd = %d\n", v->rd);
+  printf("rs1 = %d\n", v->rs1);
+  printf("rs1 = %d\n", v->rs2);
+  printf("imm/tag = %d", v->imm);
+  printf(" }\n");
 }
 
 int
