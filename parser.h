@@ -52,14 +52,25 @@
 
 #endif // !PARSER_H
 
-typedef struct instr {
+typedef struct {
   char *name;
   // int type;
   int opcode;
   int func3;
   int func7;
   int argc;
-}INST;
+} INST;
+
+typedef struct {
+  unsigned short rs1;
+  unsigned short rs2;
+  unsigned short rd;
+  union {
+    int imm;
+    int tag;
+  };
+} INSTVAR;
 
 int isinst(char *code, char *inst);
+int getarg(char *code, unsigned int inst_id, INSTVAR *v);
 int parse(char *);

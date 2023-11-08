@@ -25,7 +25,8 @@ static int line_cnt = 0; // line number
 static int code_cnt = 0; // code number
 static Tag *tag_ls = NULL; // link list of tags
 static char inst[INST_SIZ]; // current instruction
-static int inst_s;
+static int inst_id;
+static INSTVAR inst_v;
 
 static void
 usage_fmt()
@@ -144,9 +145,18 @@ int main(int argc, char *argv[])
 
       if (!istag(line)) {
         code_cnt++;
-        if ((inst_s = isinst(line, inst))) {
-          printf("%s\n", inst);
+
+        // 3.1 split out the instruction name
+        if (!(inst_id = isinst(line, inst))) {
+          fprintf(stderr, "%s: instruction not found!\n", argv[0]);
+          fprintf(stderr, "%d: %s\n", line_cnt, line);
+          fprintf(stderr, "\t^\n");
+          exit(ERR_SYNTX);
         }
+        if (getarg(line, inst_id, &inst_v)) {
+          
+        }
+        printf("%s\n", inst);
       }
 
       // printf("%s\n", line);

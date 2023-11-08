@@ -13,6 +13,7 @@
 #define ERR_ARG   1
 #define ERR_FILE  2
 #define ERR_ALLOC 3
+#define ERR_SYNTX 4
 
 // formats of output file
 #define OUT_HEXB  1

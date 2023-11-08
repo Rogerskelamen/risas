@@ -71,6 +71,17 @@ isinst(char *code, char *inst)
   return 0;
 }
 
+// #split out arguments the instruction has#
+// 1. split the code
+// 2. check if number of arguments matches(return 0 if not)
+// 3. assign v with corresponding args(need compute)
+// @return:
+int
+getarg(char *code, unsigned int inst_id, INSTVAR *v)
+{
+  return 0;
+}
+
 int
 parse(char *code)
 {
