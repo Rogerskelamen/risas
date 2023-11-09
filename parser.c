@@ -1,6 +1,9 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "parser.h"
+#include "common.h"
 
 // instruction reference
 static INST instref[] = {
@@ -104,37 +107,33 @@ par_r(char *code, INSTVAR *v)
     code++;
 
   // accept rd
-  if (*code != 'r' || *(code + 1) > '9' || *(code + 1) < '0') {
+  if (parse_reg(code, &v->rd))
     return 1; // syntax error: register
-  }
-  v->rd = *(code + 1) - '0';
 
+  while (isdigit(*++code))
+    ;
   // jump across blanks
-  code += 2;
   while (*code == ' ' || *code == '\t' || *code == ',')
     code++;
 
   // accept rs1
-  if (*code != 'r' || *(code + 1) > '9' || *(code + 1) < '0') {
+  if (parse_reg(code, &v->rs1))
     return 1; // syntax error: register
-  }
-  v->rs1 = *(code + 1) - '0';
 
+  while (isdigit(*++code))
+    ;
   // jump across blanks
-  code += 2;
   while (*code == ' ' || *code == '\t' || *code == ',')
     code++;
 
   // accept rs2
-  if (*code != 'r' || *(code + 1) > '9' || *(code + 1) < '0') {
+  if (parse_reg(code, &v->rs2))
     return 1; // syntax error: register
-  }
-  v->rs2 = *(code + 1) - '0';
 
-  code += 2;
-  if (*code != '\0') {
+  while (isdigit(*++code))
+    ;
+  if (*code != '\0')
     return 1; // syntax error: more args
-  }
 
   return 0;
 }
@@ -142,23 +141,76 @@ par_r(char *code, INSTVAR *v)
 int
 par_i(char *code, INSTVAR *v)
 {
+  int isld = 0;
+  if (*code == 'l') {
+    isld = 1; // load instruction with type-I
+  }
+  // jump across instruction name
+  while (*code != ' ' && *code != '\t')
+    code++;
+  while (*code == ' ' || *code == '\t')
+    code++;
+
+  // accept rd
+  if (parse_reg(code, &v->rd))
+    return 1; // syntax error: register
+
+  while (isdigit(*++code))
+    ;
+  // jump across blanks
+  while (*code == ' ' || *code == '\t' || *code == ',')
+    code++;
+
+  if (isld) {
+    // accept imm
+    v->imm = strtol(code, &code, 10);
+    if (*code++ != '(')
+      return 1;
+    if (*code != 'r' || *(code + 1) > '9' || *(code + 1) < '0')
+      return 1;
+  }
+
+  // accept rs1
+  if (parse_reg(code, &v->rs1))
+    return 1; // syntax error: register
+
+  while (isdigit(*++code))
+    ;
+  // jump across blanks
+  while (*code == ' ' || *code == '\t' || *code == ',')
+    code++;
+
+  // accept imm
+  v->imm = strtol(code, &code, 10);
+
+  if (*code != '\0') {
+    return 1; // syntax error: more args
+  }
+
+  return 0;
+}
+
+// @return:
+// 1 if error occurs
+// 0 otherwise
+int
+parse_reg(char *code, unsigned short *n)
+{
+  if (*code++ != 'r')
+    return 1;
+  if ((*n = (unsigned short)atoi(code)) > 31 || *n < 0)
+    return 1;
+
   return 0;
 }
 
 void
-show_arg(INSTVAR *v)
+par_show(INSTVAR *v)
 {
   printf("{ ");
   printf("rd = %d\n", v->rd);
   printf("rs1 = %d\n", v->rs1);
-  printf("rs1 = %d\n", v->rs2);
+  printf("rs2 = %d\n", v->rs2);
   printf("imm/tag = %d", v->imm);
   printf(" }\n");
-}
-
-int
-parse(char *code)
-{
-  
-  return 0;
 }

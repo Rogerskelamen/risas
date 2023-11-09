@@ -83,5 +83,6 @@ int isinst(char *code, char *inst);
 int getarg(char *code, unsigned int inst_id, INSTVAR *v);
 int par_r(char *code, INSTVAR *v);
 int par_i(char *code, INSTVAR *v);
-void show_arg(INSTVAR *v);
+int parse_reg(char *code, unsigned short *n);
+void par_show(INSTVAR *v);
 int parse(char *);

@@ -142,6 +142,7 @@ int main(int argc, char *argv[])
   while ((fgets(line, MAX_SIZ, fp)) != NULL) { // TODO: handle the line exceeds MAX_SIZ
     line_cnt++;
     if (prep_ln(line)) {
+      printf("%s\n", line);
 
       if (!istag(line)) {
         code_cnt++;
@@ -158,11 +159,10 @@ int main(int argc, char *argv[])
           fprintf(stderr, "%d: %s\n", line_cnt, line);
           exit(ERR_SYNTX);
         }
-        show_arg(&inst_v);
-        printf("%s\n", inst);
+        par_show(&inst_v);
+        // printf("%s\n", inst);
       }
 
-      // printf("%s\n", line);
     }
   }
 
