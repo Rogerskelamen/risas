@@ -17,4 +17,7 @@ $(PROG): $(OBJ)
 clean:
 	-rm $(OBJ)
 
+count:
+	find . -type f -name "*.[ch]" | xargs wc -l
+
 .PHONY: all clean
