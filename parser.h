@@ -57,7 +57,7 @@
 #define TYPE_B 4
 #define TYPE_U 5
 #define TYPE_J 6
-#define TYPE_C 7
+#define TYPE_N 7
 
 #endif // !PARSER_H
 
@@ -73,16 +73,21 @@ typedef struct {
   unsigned short rs1;
   unsigned short rs2;
   unsigned short rd;
-  union {
-    int imm;
-    int tag;
-  };
+  int imm;
 } INSTVAR;
 
 int isinst(char *code, char *inst);
-int getarg(char *code, unsigned int inst_id, INSTVAR *v);
+int hastag(char *code, int inst_id, char *tag);
+
+int parse(char *code, unsigned int inst_id, INSTVAR *v, int tag_imm);
+
 int par_r(char *code, INSTVAR *v);
 int par_i(char *code, INSTVAR *v);
+int par_s(char *code, INSTVAR *v);
+int par_b(char *code, INSTVAR *v, int tag_imm);
+int par_u(char *code, INSTVAR *v);
+int par_j(char *code, INSTVAR *v, int tag_imm);
+int par_n(char *code);
+
 int parse_reg(char *code, unsigned short *n);
 void par_show(INSTVAR *v);
-int parse(char *);

@@ -13,8 +13,9 @@ slli r4, r4, 1
 lw   r6, 4(r0)
 
 # jump out
-bge  r4, r5, 8
+bge  r4, r5, out # 8
 # jump to loop
-jar  r0, -12
+jar  r0, loop # -12
 
+out:
 nop

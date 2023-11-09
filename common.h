@@ -3,6 +3,7 @@
 
 // normal macros
 #define MAX_SIZ 256
+#define MAX_BUFSIZ 128
 
 // file modes
 #define FILE_RD  "r"
@@ -25,3 +26,5 @@
 void trim(char *);
 int  prep_ln(char *);
 int  istag(char *);
+void strrvs(char *str);
+int  strlast(char *str, char *buf);

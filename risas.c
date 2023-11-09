@@ -139,6 +139,8 @@ int main(int argc, char *argv[])
   code_cnt = 0;
 
   // 3. traverse for second time to parse
+  char tag_name[MAX_BUFSIZ];
+  int  tag_line;
   while ((fgets(line, MAX_SIZ, fp)) != NULL) { // TODO: handle the line exceeds MAX_SIZ
     line_cnt++;
     if (prep_ln(line)) {
@@ -154,7 +156,16 @@ int main(int argc, char *argv[])
           fprintf(stderr, "      ^\n");
           exit(ERR_SYNTX);
         }
-        if (getarg(line, inst_id, &inst_v)) {
+        // 3.2 pre-handle for j and b instruction
+        // cause they have tags(which is headache)
+        if (hastag(line, inst_id, tag_name)) {
+          if (!(tag_line = tag_find(tag_ls, tag_name))) {
+            fprintf(stderr, "%s: tag not found!\n", argv[0]);
+            fprintf(stderr, "%d: %s\n", line_cnt, line);
+            exit(ERR_SYNTX);
+          }
+        }
+        if (parse(line, inst_id, &inst_v, (tag_line - code_cnt) * 4)) {
           fprintf(stderr, "%s: syntax error!\n", argv[0]);
           fprintf(stderr, "%d: %s\n", line_cnt, line);
           exit(ERR_SYNTX);
