@@ -175,7 +175,7 @@ int main(int argc, char *argv[])
         }
 
         // 5. decode instruction variables to binary code
-        // if (decode(&inst_v)) {
+        // if (decode(inst_id, &inst_v)) {
         //   
         // }
 

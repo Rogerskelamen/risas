@@ -82,7 +82,7 @@ isinst(char *code, char *inst)
 int
 hastag(char *code, int inst_id, char *tag)
 {
-  if (instref[inst_id].type == TYPE_J || instref[inst_id].type == TYPE_B) {
+  if (get_type(inst_id) == TYPE_J || get_type(inst_id) == TYPE_B) {
     strlast(code, tag);
     return 1;
   }
@@ -101,7 +101,7 @@ parse(char *code, unsigned int inst_id, INSTVAR *v, int tag_imm)
   v->rs1 = -1;
   v->rs2 = -1;
   v->imm = -1;
-  switch (instref[inst_id].type) {
+  switch (get_type(inst_id)) {
     case TYPE_R:
       if(par_r(code, v))
         return 1;
@@ -410,4 +410,14 @@ par_show(INSTVAR *v)
   printf("  rs2 = %d\n", v->rs2);
   printf("  imm/tag = %d", v->imm);
   printf(" }\n");
+}
+
+void
+get_data(int inst_id, INST **inst)
+{
+  (*inst)->type = instref[inst_id].type;
+  (*inst)->func3 = instref[inst_id].func3;
+  (*inst)->func7 = instref[inst_id].func7;
+  (*inst)->opcode = instref[inst_id].opcode;
+  (*inst)->name = NULL;
 }
