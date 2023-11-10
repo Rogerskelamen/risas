@@ -20,4 +20,4 @@ clean:
 count:
 	@find . -type f -name "*.[ch]" | xargs wc -l
 
-.PHONY: all clean
+.PHONY: all clean count
