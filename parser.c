@@ -4,7 +4,6 @@
 #include <ctype.h>
 #include "parser.h"
 #include "common.h"
-#include "tags.h"
 
 // instruction reference
 static INST instref[] = {
@@ -183,9 +182,9 @@ int
 par_i(char *code, INSTVAR *v)
 {
   int isld = 0;
-  if (*code == 'l') {
+  if (*code == 'l')
     isld = 1; // load instruction with type-I
-  }
+
   // jump across instruction name
   while (*code != ' ' && *code != '\t')
     code++;
@@ -204,18 +203,18 @@ par_i(char *code, INSTVAR *v)
 
   if (isld) {
     // accept imm
-    v->imm = strtol(code, &code, 10);
+    v->imm = atoi(code);
     while (isdigit(*code))
       code++;
+    // reg in '()'
     if (*code++ != '(')
       return 1;
     // accept rs1
     parse_reg(code, &v->rs1);
     while (isdigit(*++code))
       ;
-    if (*code++ != ')') {
+    if (*code++ != ')')
       return 1;
-    }
   }else {
     // accept rs1
     if (parse_reg(code, &v->rs1))
@@ -228,15 +227,14 @@ par_i(char *code, INSTVAR *v)
       code++;
 
     // accept imm
-    v->imm = strtol(code, &code, 10);
+    v->imm = atoi(code);
 
     while (isdigit(*code))
       code++;
   }
 
-  if (*code != '\0') {
+  if (*code != '\0')
     return 1; // syntax error: more args
-  }
 
   return 0;
 }
@@ -261,7 +259,7 @@ par_s(char *code, INSTVAR *v)
     code++;
 
   // accept imm
-  v->imm = strtol(code, &code, 10);
+  v->imm = atoi(code);
   while (isdigit(*code))
     code++;
   if (*code++ != '(')
@@ -270,13 +268,11 @@ par_s(char *code, INSTVAR *v)
   parse_reg(code, &v->rs1);
   while (isdigit(*++code))
     ;
-  if (*code++ != ')') {
+  if (*code++ != ')')
     return 1;
-  }
 
-  if (*code != '\0') {
+  if (*code != '\0')
     return 1; // syntax error: more args
-  }
 
   return 0;
 }
@@ -307,8 +303,13 @@ par_b(char *code, INSTVAR *v, int tag_imm)
   while (isdigit(*++code))
     ;
   // jump across blanks
-  while (*code == ' ' || *code == '\t' || *code == ',')
+  if (*code == ',') // prehold ','
     code++;
+  while (*code == ' ' || *code == '\t')
+    code++;
+
+  if (hasblnk(code))
+    return 1; // syntax error: more args or format error
 
   // accept tag_imm
   v->imm = tag_imm;
@@ -319,12 +320,63 @@ par_b(char *code, INSTVAR *v, int tag_imm)
 int
 par_u(char *code, INSTVAR *v)
 {
+  // jump across instruction name
+  while (*code != ' ' && *code != '\t')
+    code++;
+  while (*code == ' ' || *code == '\t')
+    code++;
+
+  // accept rd
+  if (parse_reg(code, &v->rd))
+    return 1; // syntax error: register
+
+  while (isdigit(*++code))
+    ;
+  // jump across blanks
+  while (*code == ' ' || *code == '\t' || *code == ',')
+    code++;
+
+  // accept imm
+  v->imm = atoi(code);
+  while (isdigit(*code))
+    code++;
+
+  if (*code != '\0')
+    return 1; // syntax error: more args
+
   return 0;
 }
 
 int
 par_j(char *code, INSTVAR *v, int tag_imm)
 {
+  // jump across instruction name
+  while (*code != ' ' && *code != '\t')
+    code++;
+  while (*code == ' ' || *code == '\t')
+    code++;
+
+  // accept rd
+  if (parse_reg(code, &v->rd))
+    return 1; // syntax error: register
+
+  while (isdigit(*++code))
+    ;
+  // jump across blanks
+  if (*code == ',') // prehold ','
+    code++;
+  while (*code == ' ' || *code == '\t')
+    code++;
+
+  if (hasblnk(code))
+    return 1; // syntax error: more args
+
+  // accept imm
+  v->imm = tag_imm;
+
+  if (*code != '\0')
+    return 1; // syntax error: more args
+
   return 0;
 }
 

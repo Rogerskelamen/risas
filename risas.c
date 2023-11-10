@@ -149,14 +149,15 @@ int main(int argc, char *argv[])
       if (!istag(line)) {
         code_cnt++;
 
-        // 3.1 split out the instruction name
+        // 4. parse instruction to identify and accept variables
+        // 4.1 split out the instruction name
         if (!(inst_id = isinst(line, inst))) {
           fprintf(stderr, "%s: instruction not found!\n", argv[0]);
           fprintf(stderr, "%d: %s\n", line_cnt, line);
           fprintf(stderr, "      ^\n");
           exit(ERR_SYNTX);
         }
-        // 3.2 pre-handle for j and b instruction
+        // 4.2 pre-handle for j and b instruction
         // cause they have tags(which is headache)
         if (hastag(line, inst_id, tag_name)) {
           if (!(tag_line = tag_find(tag_ls, tag_name))) {
@@ -165,15 +166,20 @@ int main(int argc, char *argv[])
             exit(ERR_SYNTX);
           }
         }
+        // 4.3 accept all instruction variables
         if (parse(line, inst_id, &inst_v, (tag_line - code_cnt) * 4)) {
           fprintf(stderr, "%s: syntax error!\n", argv[0]);
           fprintf(stderr, "%d: %s\n", line_cnt, line);
           exit(ERR_SYNTX);
         }
-        par_show(&inst_v);
-        // printf("%s\n", inst);
-      }
 
+        // 5. decode instruction variables to binary code
+        // if (decode(&inst_v)) {
+        //   
+        // }
+
+        par_show(&inst_v);
+      }
     }
   }
 

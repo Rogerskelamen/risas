@@ -26,5 +26,6 @@
 void trim(char *);
 int  prep_ln(char *);
 int  istag(char *);
-void strrvs(char *str);
-int  strlast(char *str, char *buf);
+void strrvs(char *);
+int  strlast(char *, char *);
+int  hasblnk(char *);

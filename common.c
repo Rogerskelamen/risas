@@ -145,3 +145,18 @@ strrvs(char *str)
     str[len - i - 1] = tmp;
   }
 }
+
+// @return:
+// the number of '\t' and ' ' in string
+// 0 otherwise
+int
+hasblnk(char *str)
+{
+  int n = 0;
+  while (*str++) {
+    if (*str == ' ' || *str == '\t')
+      n++;
+  }
+
+  return n;
+}

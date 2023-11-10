@@ -15,9 +15,9 @@ $(PROG): $(OBJ)
 	$(CC) -c $(CFLAGS) $<
 
 clean:
-	-rm $(OBJ)
+	-rm -f $(OBJ) $(PROG)
 
 count:
-	find . -type f -name "*.[ch]" | xargs wc -l
+	@find . -type f -name "*.[ch]" | xargs wc -l
 
 .PHONY: all clean
