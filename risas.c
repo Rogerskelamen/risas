@@ -18,7 +18,8 @@
 #include "parser.h"
 
 // variables
-static FILE *fp; // file pointer to source file
+static FILE *fip; // file pointer to input source file
+static FILE *fop; // file pointer to output file
 static int out_fmt; // output file format
 static char line[MAX_SIZ];
 static int line_cnt = 0; // line number
@@ -66,7 +67,7 @@ int main(int argc, char *argv[])
     exit(ERR_ARG);
   }
   // 0.2 check whether the source file path is correct
-  if ((fp = fopen(argv[1], FILE_RD)) == NULL) {
+  if ((fip = fopen(argv[1], FILE_RD)) == NULL) {
     fprintf(stderr, "%s: can't open %s, please make sure the pid you typed exists\n", argv[0], argv[1]);
     exit(ERR_FILE);
   }
@@ -76,13 +77,13 @@ int main(int argc, char *argv[])
   if (argc <= 2) {
     if(!(out_fmt = get_fmt())) {
       fprintf(stderr, "%s: the option you typed in is incorrect[1/2/3]\n", argv[0]);
-      fclose(fp);
+      fclose(fip);
       exit(ERR_ARG);
     }
   // 1.2 third argument may not correct
   } else if (argc > 3 || strlen(argv[2]) != 3 || *argv[2] != '-' || *(argv[2] + 1) != 'f') {
     usage(argv[0]);
-    fclose(fp);
+    fclose(fip);
     exit(ERR_ARG);
   } else {
   // then I know the command is entered correctly
@@ -99,7 +100,7 @@ int main(int argc, char *argv[])
         break;
       default:
         fprintf(stderr, "%s: the output format you typed in is incorrect[1/2/3]\n", argv[0]);
-        fclose(fp);
+        fclose(fip);
         exit(ERR_ARG);
         break;
     }
@@ -108,7 +109,7 @@ int main(int argc, char *argv[])
   // printf("the choice is %d\n", out_fmt);
 
   // 2. traverse for first time to get all tags
-  while ((fgets(line, MAX_SIZ, fp)) != NULL) { // TODO: handle the line exceeds MAX_SIZ
+  while ((fgets(line, MAX_SIZ, fip)) != NULL) { // TODO: handle the line exceeds MAX_SIZ
     line_cnt++;
     if (prep_ln(line)) {
 
@@ -133,7 +134,7 @@ int main(int argc, char *argv[])
     }
   }
 
-  rewind(fp);
+  rewind(fip);
   // initialize all arguments
   line_cnt = 0;
   code_cnt = 0;
@@ -141,7 +142,7 @@ int main(int argc, char *argv[])
   // 3. traverse for second time to parse
   char tag_name[MAX_BUFSIZ];
   int  tag_line;
-  while ((fgets(line, MAX_SIZ, fp)) != NULL) { // TODO: handle the line exceeds MAX_SIZ
+  while ((fgets(line, MAX_SIZ, fip)) != NULL) { // TODO: handle the line exceeds MAX_SIZ
     line_cnt++;
     if (prep_ln(line)) {
       printf("%s\n", line);
@@ -193,7 +194,7 @@ int main(int argc, char *argv[])
 
   // clean up
   tag_dealloc(tag_ls);
-  fclose(fp);
+  fclose(fip);
 
   return EXIT_SUCCESS;
 }
