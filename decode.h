@@ -3,6 +3,24 @@
 
 #endif // !DECODE_H
 
-#include "parser.h"
+typedef struct {
+  char *name;
+  int type;
+  int opcode;
+  int func3;
+  int func7;
+  unsigned short rd;
+  unsigned short rs1;
+  unsigned short rs2;
+  int imm;
+} INSTINFO;
 
-int decode(int inst_id, INSTVAR *v);
+int decode(INSTINFO *inst, int *bincp);
+
+void dec_r(INSTINFO *inst, int *bincp);
+void dec_i(INSTINFO *inst, int *bincp);
+void dec_s(INSTINFO *inst, int *bincp);
+void dec_b(INSTINFO *inst, int *bincp);
+void dec_u(INSTINFO *inst, int *bincp);
+void dec_j(INSTINFO *inst, int *bincp);
+void dec_n(INSTINFO *inst, int *bincp);

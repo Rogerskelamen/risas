@@ -16,18 +16,22 @@
 #include "common.h"
 #include "tags.h"
 #include "parser.h"
+#include "decode.h"
 
 // variables
 static FILE *fip; // file pointer to input source file
-static FILE *fop; // file pointer to output file
+// static FILE *fop; // file pointer to output file
 static int out_fmt; // output file format
 static char line[MAX_SIZ];
 static int line_cnt = 0; // line number
 static int code_cnt = 0; // code number
 static Tag *tag_ls = NULL; // link list of tags
-static char inst[INST_SIZ]; // current instruction
-static int inst_id;
-static INSTVAR inst_v;
+static char inst[INST_SIZ]; // current instruction name
+static int inst_id; // current instruction symbol
+static INST *cinst; // current instruction
+static INSTVAR inst_v; // current instruciton vars
+static INSTINFO cinstinfo;
+static int binc; // the binary code transformed to
 
 static void
 usage_fmt()
@@ -142,6 +146,10 @@ int main(int argc, char *argv[])
   // 3. traverse for second time to parse
   char tag_name[MAX_BUFSIZ];
   int  tag_line;
+  if ((cinst = (INST *)malloc(sizeof(INST))) == NULL) {
+    fprintf(stderr, "%s: memory allocation failed!\n", argv[0]);
+    exit(ERR_ALLOC);
+  }
   while ((fgets(line, MAX_SIZ, fip)) != NULL) { // TODO: handle the line exceeds MAX_SIZ
     line_cnt++;
     if (prep_ln(line)) {
@@ -175,11 +183,24 @@ int main(int argc, char *argv[])
         }
 
         // 5. decode instruction variables to binary code
-        // if (decode(inst_id, &inst_v)) {
-        //   
-        // }
+        // 5.1 dump instruction and instruction vars into another data structure
+        get_data(inst_id, &cinst);
+        cinstinfo.name = inst;
+        cinstinfo.type = cinst->type;
+        cinstinfo.func3 = cinst->func3;
+        cinstinfo.func7 = cinst->func7;
+        cinstinfo.opcode = cinst->opcode;
+        cinstinfo.rd = inst_v.rd;
+        cinstinfo.rs1 = inst_v.rs1;
+        cinstinfo.rs2 = inst_v.rs2;
+        cinstinfo.imm = inst_v.imm;
 
-        par_show(&inst_v);
+        // 5.2 decode to binary code
+        if (decode(&cinstinfo, &binc)) {
+          
+        }
+
+        // par_show(&inst_v);
       }
     }
   }
@@ -194,6 +215,7 @@ int main(int argc, char *argv[])
 
   // clean up
   tag_dealloc(tag_ls);
+  free(cinst);
   fclose(fip);
 
   return EXIT_SUCCESS;

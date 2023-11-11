@@ -91,5 +91,4 @@ int par_n(char *code);
 
 int parse_reg(char *code, unsigned short *n);
 void par_show(INSTVAR *v);
-int  get_type(int inst_id);
 void get_data(int inst_id, INST **inst);

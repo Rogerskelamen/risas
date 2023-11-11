@@ -58,9 +58,6 @@ prep_ln(char *line)
   return 1;
 }
 
-// int
-// splits(char *s, char **)
-
 // @return:
 // 1 if it's a tag
 // 0 otherwise
@@ -86,11 +83,14 @@ istag(char *code)
 // @return:
 // the length of last string
 // 0 if got empty string(only blank include)
+// -1 if malloc failed
 int
 strlast(char *str, char *buf)
 {
   int len = strlen(str);
-  char *tmp = (char *)malloc(sizeof(char) * (len + 1));
+  char *tmp;
+  if (!(tmp = (char *)malloc(sizeof(char) * (len + 1))))
+    return -1;
 
   // reverse
   int i = 0;
@@ -148,4 +148,19 @@ hasblnk(char *str)
   }
 
   return n;
+}
+
+// int
+// splits(char *s, char **)
+
+// @return:
+// the bit(1/0) on the pos of number n
+// -1 if pos is invalid
+int
+bitat(int n, int pos)
+{
+  if (pos < 0 || pos > 31)
+    return -1;
+
+  return (n >> pos) & 1;
 }

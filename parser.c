@@ -82,7 +82,7 @@ isinst(char *code, char *inst)
 int
 hastag(char *code, int inst_id, char *tag)
 {
-  if (get_type(inst_id) == TYPE_J || get_type(inst_id) == TYPE_B) {
+  if (instref[inst_id].type == TYPE_J || instref[inst_id].type == TYPE_B) {
     strlast(code, tag);
     return 1;
   }
@@ -101,7 +101,7 @@ parse(char *code, unsigned int inst_id, INSTVAR *v, int tag_imm)
   v->rs1 = -1;
   v->rs2 = -1;
   v->imm = -1;
-  switch (get_type(inst_id)) {
+  switch (instref[inst_id].type) {
     case TYPE_R:
       if(par_r(code, v))
         return 1;
