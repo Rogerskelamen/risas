@@ -197,11 +197,29 @@ int main(int argc, char *argv[])
 
         // 5.2 decode to binary code
         if (decode(&cinstinfo, &binc)) {
-          fprintf(stderr, "%s: ", argv[0]);
+          fprintf(stderr, "%s: syntax error!\n", argv[0]);
+          fprintf(stderr, "%d: %s\n", line_cnt, line);
           exit(ERR_SYNTX);
         }
+        printf("code = %x\n", binc);
 
-        par_show(&inst_v);
+        // 6. output binary code to specified file
+
+        // 6.1 transform binary code to ascii code
+        // three format should be all concerned
+        switch (out_fmt) {
+          case OUT_BIN:
+            btos(binc, line);
+            break;
+          case OUT_HEX:
+            htos(binc, line);
+            break;
+          case OUT_HEXB:
+            htos(binc, line);
+            break;
+        }
+
+        // par_show(&inst_v);
       }
     }
   }

@@ -33,7 +33,6 @@ decode(INSTINFO *inst, int *bincp)
       return 1; // can't find the type
       break;
   }
-  printf("code = %x\n", *bincp);
   return 0;
 }
 
@@ -60,7 +59,6 @@ dec_s(INSTINFO *inst, int *bincp)
 void
 dec_b(INSTINFO *inst, int *bincp)
 {
-  // printf("test = %x\n", bitspan(7, 1, 2));
   int imm1210_5 = (bitat(inst->imm, 12) << 6) + bitspan(inst->imm, 5, 10);
   int imm4_111 = (bitspan(inst->imm, 1, 4) << 1) + bitat(inst->imm, 11);
   *bincp = (imm1210_5 << 25) + (inst->rs2 << 20) + (inst->rs1 << 15) + (inst->func3 << 12) + (imm4_111 << 7) + inst->opcode;

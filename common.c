@@ -178,3 +178,17 @@ bitspan(int n, short from, short to)
   int cnst = (1 << (to - from + 1)) - 1; // pow(2, to - from + 1)
   return (n >> from) & cnst;
 }
+
+// #translate a number in binary form to ascii string#
+int
+btos(int n, char *s)
+{
+
+}
+
+// #translate a number in hexadecimal form to ascii string#
+int
+htos(int n, char *s)
+{
+
+}
