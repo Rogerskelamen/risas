@@ -29,3 +29,5 @@ int  istag(char *);
 void strrvs(char *);
 int  strlast(char *, char *);
 int  hasblnk(char *);
+int  bitat(int, short);
+int  bitspan(int, short, short);

@@ -197,10 +197,11 @@ int main(int argc, char *argv[])
 
         // 5.2 decode to binary code
         if (decode(&cinstinfo, &binc)) {
-          
+          fprintf(stderr, "%s: ", argv[0]);
+          exit(ERR_SYNTX);
         }
 
-        // par_show(&inst_v);
+        par_show(&inst_v);
       }
     }
   }

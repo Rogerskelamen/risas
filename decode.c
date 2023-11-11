@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "common.h"
 #include "decode.h"
 #include "parser.h"
 
@@ -17,20 +18,16 @@ decode(INSTINFO *inst, int *bincp)
       dec_s(inst, bincp);
       break;
     case TYPE_B:
-      // if (par_b(code, v, tag_imm))
-      //   return 1;
+      dec_b(inst, bincp);
       break;
     case TYPE_U:
-      // if (par_u(code, v))
-      //   return 1;
+      dec_u(inst, bincp);
       break;
     case TYPE_J:
-      // if (par_j(code, v, tag_imm))
-      //   return 1;
+      dec_j(inst, bincp);
       break;
     case TYPE_N:
-      // if (par_n(code))
-      //   return 1;
+      dec_n(inst, bincp);
       break;
     default:
       return 1; // can't find the type
@@ -63,20 +60,23 @@ dec_s(INSTINFO *inst, int *bincp)
 void
 dec_b(INSTINFO *inst, int *bincp)
 {
-  // int imm1210_5 = ((inst->imm >> 12) & 0b1) >>  + ((inst->imm >> 5) & 0b111111))
-  int imm4_111 = inst->imm;
+  // printf("test = %x\n", bitspan(7, 1, 2));
+  int imm1210_5 = (bitat(inst->imm, 12) << 6) + bitspan(inst->imm, 5, 10);
+  int imm4_111 = (bitspan(inst->imm, 1, 4) << 1) + bitat(inst->imm, 11);
+  *bincp = (imm1210_5 << 25) + (inst->rs2 << 20) + (inst->rs1 << 15) + (inst->func3 << 12) + (imm4_111 << 7) + inst->opcode;
 }
 
 void
 dec_u(INSTINFO *inst, int *bincp)
 {
-  
+  *bincp = (inst->imm & ~0xfff) + (inst->rd << 7) + inst->opcode;
 }
 
 void
 dec_j(INSTINFO *inst, int *bincp)
 {
-  
+  int imm = (bitat(inst->imm, 20) << 19) + (bitspan(inst->imm, 1, 10) << 9) + (bitat(inst->imm, 11) << 8) + bitspan(inst->imm, 12, 19);
+  *bincp = (imm << 12) + (inst->rd << 7) + inst->opcode;
 }
 
 void

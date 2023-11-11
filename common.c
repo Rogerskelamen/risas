@@ -157,10 +157,24 @@ hasblnk(char *str)
 // the bit(1/0) on the pos of number n
 // -1 if pos is invalid
 int
-bitat(int n, int pos)
+bitat(int n, short pos)
 {
   if (pos < 0 || pos > 31)
     return -1;
 
   return (n >> pos) & 1;
+}
+
+// @return:
+// extract value from pos_a to pos_b of number n
+// -1 if out of range or from >= to
+int
+bitspan(int n, short from, short to)
+{
+  if (from < 0 || from > 31 || to < 0 || to > 31 || from >= to) {
+    return -1;
+  }
+
+  int cnst = (1 << (to - from + 1)) - 1; // pow(2, to - from + 1)
+  return (n >> from) & cnst;
 }

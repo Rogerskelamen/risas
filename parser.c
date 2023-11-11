@@ -42,7 +42,7 @@ static INST instref[] = {
   [INST_BGE]    = {"bge",     TYPE_B,  0b1100011,  0b101,  -1},
   [INST_BLTU]   = {"bltu",    TYPE_B,  0b1100011,  0b110,  -1},
   [INST_BGEU]   = {"bgeu",    TYPE_B,  0b1100011,  0b111,  -1},
-  [INST_JAL]    = {"jal",     TYPE_U,  0b1101111,  -1,     -1},
+  [INST_JAL]    = {"jal",     TYPE_J,  0b1101111,  -1,     -1},
   [INST_JALR]   = {"jalr",    TYPE_I,  0b1100111,  0b000,  -1},
   [INST_CSRRW]  = {"csrrw",   TYPE_I,  0b1110011,  0b001,  -1},
   [INST_CSRRS]  = {"csrrs",   TYPE_I,  0b1110011,  0b010,  -1},
@@ -373,9 +373,7 @@ par_j(char *code, INSTVAR *v, int tag_imm)
 
   // accept imm
   v->imm = tag_imm;
-
-  if (*code != '\0')
-    return 1; // syntax error: more args
+  printf("hello\n");
 
   return 0;
 }
