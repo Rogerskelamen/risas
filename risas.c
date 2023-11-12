@@ -8,6 +8,10 @@
  * - riscv hexadecimal machine code(one byte per line)
  * - riscv hexadecimal machine code(instruction per line)
  * - riscv binary machine code(instruction per line)
+ * @flaws:
+ * 1. when assembling, pc won't automatically increment for each instruction,
+ * which means branch tag is translated to tag_addr - pc
+ * rather than tag_addr - pc - 1
  */
 
 #include <stdio.h>
@@ -21,7 +25,8 @@
 
 // variables
 static FILE *fip; // file pointer to input source file
-// static FILE *fop; // file pointer to output file
+static FILE *fop; // file pointer to output file
+static char outname[MAX_SIZ];
 static int out_fmt; // output file format
 static char line[MAX_SIZ];
 static int line_cnt = 0; // line number
@@ -112,8 +117,6 @@ int main(int argc, char *argv[])
     }
   }
 
-  // printf("the choice is %d\n", out_fmt);
-
   // 2. traverse for first time to get all tags
   while ((fgets(line, MAX_SIZ, fip)) != NULL) { // TODO: handle the line exceeds MAX_SIZ
     line_cnt++;
@@ -155,7 +158,7 @@ int main(int argc, char *argv[])
   while ((fgets(line, MAX_SIZ, fip)) != NULL) { // TODO: handle the line exceeds MAX_SIZ
     line_cnt++;
     if (prep_ln(line)) {
-      printf("%s\n", line);
+      // printf("%s\n", line);
 
       if (!istag(line)) {
         code_cnt++;
@@ -224,8 +227,8 @@ int main(int argc, char *argv[])
     }
   }
 
-  tag_show(tag_ls);
-  printf("\nline count: %d\n", line_cnt);
+  // tag_show(tag_ls);
+  // printf("\nline count: %d\n", line_cnt);
 
   // clean up for next stage(output)
   fclose(fip);
@@ -233,27 +236,35 @@ int main(int argc, char *argv[])
   free(cinst);
 
   // 7. output binary code to specified file
+  // 7.1 try to open output file
+  filename_only(argv[1], outname);
+  strcat(outname, out_fmt > 2 ? SUF_BIN : SUF_HEX);
+  if ((fop = fopen(outname, FILE_WRT)) == NULL) {
+    fprintf(stderr, "%s: can't open output file %s please make sure the pid you typed exists\n", argv[0],outname);
+    fclose(fip);
+    exit(ERR_FILE);
+  }
 
-  // 7.1 transform binary code to ascii code
+  // 7.2 transform binary code to ascii code
   // three format should be all concerned
   switch (out_fmt) {
     case OUT_BIN:
       for (int i = 0; i < out->size; i++) {
         btos(out->contents[i], line, 32); // line can be used for output
-        fprintf(stdout, "%s\n", line);
+        fprintf(fop, "%s\n", line);
       }
       break;
     case OUT_HEX:
       for (int i = 0; i < out->size; i++) {
-        fprintf(stdout, "%x\n", out->contents[i]);
+        fprintf(fop, "%x\n", out->contents[i]);
       }
       break;
     case OUT_HEXB:
       for (int i = 0; i < out->size; i++) {
-        fprintf(stdout, "%x\n", bitspan(out->contents[i], 24, 31));
-        fprintf(stdout, "%x\n", bitspan(out->contents[i], 16, 23));
-        fprintf(stdout, "%x\n", bitspan(out->contents[i], 8, 15));
-        fprintf(stdout, "%x\n", bitspan(out->contents[i], 0, 7));
+        fprintf(fop, "%x\n", bitspan(out->contents[i], 24, 31));
+        fprintf(fop, "%x\n", bitspan(out->contents[i], 16, 23));
+        fprintf(fop, "%x\n", bitspan(out->contents[i], 8, 15));
+        fprintf(fop, "%x\n", bitspan(out->contents[i], 0, 7));
       }
       break;
   }
@@ -264,6 +275,7 @@ int main(int argc, char *argv[])
 
   // clean up
   out_dealloc(out);
+  fclose(fop);
 
   return EXIT_SUCCESS;
 }

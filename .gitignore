@@ -1,2 +1,6 @@
 *.o
+*.bin
+*.hex
+
 risas
+test/

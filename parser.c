@@ -373,7 +373,6 @@ par_j(char *code, INSTVAR *v, int tag_imm)
 
   // accept imm
   v->imm = tag_imm;
-  printf("hello\n");
 
   return 0;
 }

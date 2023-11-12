@@ -10,6 +10,10 @@
 #define FILE_WRT "w"
 #define FILE_APD "a"
 
+// file suffix
+#define SUF_HEX ".hex"
+#define SUF_BIN ".bin"
+
 // error numbers
 #define ERR_ARG   1
 #define ERR_FILE  2
@@ -32,4 +36,5 @@ int  hasblnk(char *);
 int  bitat(int, short);
 int  bitspan(int, short, short);
 int  btos(int, char *, short);
-int  htos(int, char *);
+int  getdir(char *, char *);
+int  filename_only(char *, char *);

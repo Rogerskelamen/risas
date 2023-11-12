@@ -205,9 +205,55 @@ btos(int n, char *s, short span)
   return 0;
 }
 
-// #translate a number in hexadecimal form to ascii string#
-// int
-// htos(int n, char *s)
-// {
-//
-// }
+// # get the directory path of the file #
+// @return:
+// 1 if no '/' found
+// 0 otherwise
+int
+getdir(char *path, char *dir)
+{
+  int pos = -1;
+  int i;
+  for (i = 0; path[i]; i++) {
+    if (*path == '/') {
+      pos = i;
+    }
+  }
+  if (pos < 0)
+    return 1;
+
+  for (i = 0; i <= pos; i++) {
+    dir[i] = path[i];
+  }
+  dir[i] = '\0';
+
+  return 0;
+}
+
+// # get file path but strip of file extension #
+// @return:
+// 1 if no '/' found
+// 0 otherwise
+int
+filename_only(char *path, char *dir)
+{
+  int pos = -1;
+  int i;
+  for (i = 0; path[i]; i++) {
+    if (path[i] == '/') {
+      pos = i;
+    }
+  }
+  if (pos < 0)
+    return 1;
+
+  for (i = 0; path[i]; i++) {
+    if (i >= pos && path[i] == '.')
+      break;
+    dir[i] = path[i];
+  }
+  dir[i] = '\0';
+
+  return 0;
+}
+
