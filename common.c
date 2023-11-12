@@ -1,7 +1,7 @@
+#include "common.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "common.h"
 
 // #trim the wrapping blanks#
 void
@@ -180,15 +180,34 @@ bitspan(int n, short from, short to)
 }
 
 // #translate a number in binary form to ascii string#
+// @args:
+// span: the number of bit you want to present
+// @return:
+// 1 if span is out of range
 int
-btos(int n, char *s)
+btos(int n, char *s, short span)
 {
+  if (span > 32 || span < 1) {
+    return 1;
+  }
 
+  char *h = s;
+
+  int i = 0;
+  while (i++ < span) {
+    *s++ = (n & 1) + '0';
+    n = n >> 1;
+  }
+  *s = '\0';
+
+  strrvs(h);
+
+  return 0;
 }
 
 // #translate a number in hexadecimal form to ascii string#
-int
-htos(int n, char *s)
-{
-
-}
+// int
+// htos(int n, char *s)
+// {
+//
+// }

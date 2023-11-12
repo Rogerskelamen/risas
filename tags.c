@@ -1,7 +1,7 @@
+#include "tags.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "tags.h"
 
 // #allocate memory for a tag#
 // @return:

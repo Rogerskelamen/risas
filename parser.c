@@ -1,9 +1,9 @@
+#include "parser.h"
+#include "common.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "parser.h"
-#include "common.h"
 
 // instruction reference
 static INST instref[] = {

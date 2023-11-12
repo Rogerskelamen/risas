@@ -1,8 +1,8 @@
+#include "decode.h"
+#include "common.h"
+#include "parser.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "common.h"
-#include "decode.h"
-#include "parser.h"
 
 int
 decode(INSTINFO *inst, int *bincp)

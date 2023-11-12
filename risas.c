@@ -17,6 +17,7 @@
 #include "tags.h"
 #include "parser.h"
 #include "decode.h"
+#include "out.h"
 
 // variables
 static FILE *fip; // file pointer to input source file
@@ -32,6 +33,7 @@ static INST *cinst; // current instruction
 static INSTVAR inst_v; // current instruciton vars
 static INSTINFO cinstinfo;
 static int binc; // the binary code transformed to
+static BinOut *out = NULL;
 
 static void
 usage_fmt()
@@ -201,41 +203,67 @@ int main(int argc, char *argv[])
           fprintf(stderr, "%d: %s\n", line_cnt, line);
           exit(ERR_SYNTX);
         }
-        printf("code = %x\n", binc);
+        // printf("code = %x\n", binc);
 
-        // 6. output binary code to specified file
-
-        // 6.1 transform binary code to ascii code
-        // three format should be all concerned
-        switch (out_fmt) {
-          case OUT_BIN:
-            btos(binc, line);
-            break;
-          case OUT_HEX:
-            htos(binc, line);
-            break;
-          case OUT_HEXB:
-            htos(binc, line);
-            break;
+        // 6. store the binary value into a dynamic array
+        if (!out) {
+          if (out_create(&out, binc)) {
+            out_dealloc(out);
+            fprintf(stderr, "%s: memory allocation failed!\n", argv[0]);
+            exit(ERR_ALLOC);
+          }
+        } else {
+          if (out_inc(out, binc)) {
+            out_dealloc(out);
+            fprintf(stderr, "%s: memory allocation failed!\n", argv[0]);
+            exit(ERR_ALLOC);
+          }
         }
-
         // par_show(&inst_v);
       }
     }
   }
 
+  tag_show(tag_ls);
   printf("\nline count: %d\n", line_cnt);
 
-  tag_show(tag_ls);
+  // clean up for next stage(output)
+  fclose(fip);
+  tag_dealloc(tag_ls);
+  free(cinst);
+
+  // 7. output binary code to specified file
+
+  // 7.1 transform binary code to ascii code
+  // three format should be all concerned
+  switch (out_fmt) {
+    case OUT_BIN:
+      for (int i = 0; i < out->size; i++) {
+        btos(out->contents[i], line, 32); // line can be used for output
+        fprintf(stdout, "%s\n", line);
+      }
+      break;
+    case OUT_HEX:
+      for (int i = 0; i < out->size; i++) {
+        fprintf(stdout, "%x\n", out->contents[i]);
+      }
+      break;
+    case OUT_HEXB:
+      for (int i = 0; i < out->size; i++) {
+        fprintf(stdout, "%x\n", bitspan(out->contents[i], 24, 31));
+        fprintf(stdout, "%x\n", bitspan(out->contents[i], 16, 23));
+        fprintf(stdout, "%x\n", bitspan(out->contents[i], 8, 15));
+        fprintf(stdout, "%x\n", bitspan(out->contents[i], 0, 7));
+      }
+      break;
+  }
 
   // input from stdin
   // if (argc > 2) {
   // }
 
   // clean up
-  tag_dealloc(tag_ls);
-  free(cinst);
-  fclose(fip);
+  out_dealloc(out);
 
   return EXIT_SUCCESS;
 }

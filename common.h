@@ -31,5 +31,5 @@ int  strlast(char *, char *);
 int  hasblnk(char *);
 int  bitat(int, short);
 int  bitspan(int, short, short);
-int  btos(int, char *);
+int  btos(int, char *, short);
 int  htos(int, char *);
