@@ -90,5 +90,6 @@ int par_j(char *code, INSTVAR *v, int tag_imm);
 int par_n(char *code);
 
 int parse_reg(char *code, unsigned short *n);
+int parse_imm(char *code, int *imm);
 void par_show(INSTVAR *v);
 void get_data(int inst_id, INST **inst);

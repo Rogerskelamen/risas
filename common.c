@@ -240,16 +240,14 @@ filename_only(char *path, char *dir)
   int pos = -1;
   int i;
   for (i = 0; path[i]; i++) {
-    if (path[i] == '/') {
+    if (path[i] == '.') {
       pos = i;
     }
   }
   if (pos < 0)
     return 1;
 
-  for (i = 0; path[i]; i++) {
-    if (i >= pos && path[i] == '.')
-      break;
+  for (i = 0; i < pos; i++) {
     dir[i] = path[i];
   }
   dir[i] = '\0';

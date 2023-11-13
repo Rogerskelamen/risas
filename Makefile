@@ -17,6 +17,12 @@ $(PROG): $(OBJ)
 clean:
 	-rm -f $(OBJ) $(PROG)
 
+install: all
+	cp $(PROG) /usr/local/bin/
+
+uninstall:
+	rm /usr/local/bin/$(PROG)
+
 count:
 	@find . -type f -name "*.[ch]" | xargs wc -l
 

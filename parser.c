@@ -203,7 +203,10 @@ par_i(char *code, INSTVAR *v)
 
   if (isld) {
     // accept imm
-    v->imm = atoi(code);
+    if (parse_imm(code, &v->imm))
+      return 1;
+    if (*code == '-')
+      code++;
     while (isdigit(*code))
       code++;
     // reg in '()'
@@ -227,8 +230,10 @@ par_i(char *code, INSTVAR *v)
       code++;
 
     // accept imm
-    v->imm = atoi(code);
-
+    if (parse_imm(code, &v->imm))
+      return 1;
+    if (*code == '-')
+      code++;
     while (isdigit(*code))
       code++;
   }
@@ -259,7 +264,10 @@ par_s(char *code, INSTVAR *v)
     code++;
 
   // accept imm
-  v->imm = atoi(code);
+  if (parse_imm(code, &v->imm))
+    return 1;
+  if (*code == '-')
+    code++;
   while (isdigit(*code))
     code++;
   if (*code++ != '(')
@@ -337,7 +345,10 @@ par_u(char *code, INSTVAR *v)
     code++;
 
   // accept imm
-  v->imm = atoi(code);
+  if (parse_imm(code, &v->imm))
+    return 1;
+  if (*code == '-')
+    code++;
   while (isdigit(*code))
     code++;
 
@@ -394,6 +405,20 @@ parse_reg(char *code, unsigned short *n)
     return 1;
   if ((*n = (unsigned short)atoi(code)) > 31 || *n < 0)
     return 1;
+
+  return 0;
+}
+
+int
+parse_imm(char *code, int *imm)
+{
+  if (isdigit(*code)) {
+    *imm = atoi(code);
+  }else if (*code++ == '-') {
+    *imm = atoi(code) * (-1);
+  }else {
+    return 1;
+  }
 
   return 0;
 }
