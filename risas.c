@@ -12,6 +12,10 @@
  * 1. when assembling, pc won't automatically increment for each instruction,
  * which means branch tag is translated to tag_addr - pc
  * rather than tag_addr - pc - 1
+ * 2. it doesn't support pseudo-code or register alias
+ * e.g. `jr myfunc`
+ * you have to translate it manually to
+ * `jal x1, myfunc` (x1 means ra)
  */
 
 #include <stdio.h>

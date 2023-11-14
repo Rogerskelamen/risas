@@ -401,7 +401,7 @@ par_n(char *code)
 int
 parse_reg(char *code, unsigned short *n)
 {
-  if (*code++ != 'r')
+  if (*code++ != 'x')
     return 1;
   if ((*n = (unsigned short)atoi(code)) > 31 || *n < 0)
     return 1;
