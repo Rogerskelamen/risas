@@ -13,7 +13,7 @@
  * which means branch tag is translated to tag_addr - pc
  * rather than tag_addr - pc - 1
  * 2. it doesn't support pseudo-code or register alias
- * e.g. `jr myfunc`
+ * e.g. `call myfunc`
  * you have to translate it manually to
  * `jal x1, myfunc` (x1 means ra)
  */
@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "common.h"
 #include "tags.h"
 #include "parser.h"
@@ -28,10 +29,12 @@
 #include "out.h"
 
 // variables
+static int opt; // command-line arg options
 static FILE *fip; // file pointer to input source file
 static FILE *fop; // file pointer to output file
 static char outname[MAX_SIZ];
-static int out_fmt; // output file format
+static char *fout = NULL; // '-o' output filename
+static int out_fmt = 0; // output file format
 static char line[MAX_SIZ];
 static int line_cnt = 0; // line number
 static int code_cnt = 0; // code number
@@ -42,21 +45,21 @@ static INST *cinst; // current instruction
 static INSTVAR inst_v; // current instruciton vars
 static INSTINFO cinstinfo;
 static int binc; // the binary code transformed to
-static BinOut *out = NULL;
+static BinOut *out = NULL; // out dynamic data
 
 static void
 usage_fmt()
 {
-  printf("==== protential output file format ====\n");
-  printf("- 1: hexadecimal machine code(one byte per line)\n");
-  printf("- 2: hexadecimal machine code(one instruction per line)\n");
+  printf("==== available output file format ====\n");
+  printf("- 1: hexadecimal machine code(one instruction per line)\n");
+  printf("- 2: hexadecimal machine code(one byte per line)\n");
   printf("- 3: binary machine code(instruction per line)\n");
 }
 
 static void
 usage(char *cmd)
 {
-  printf("Usage: %s [riscv assembly file] -f[output file format]\n", cmd);
+  printf("\nUsage: %s [riscv assembly file] -f[output file format] [-o [output filename]]\n", cmd);
   usage_fmt();
 }
 
@@ -75,49 +78,43 @@ get_fmt()
 // main function
 int main(int argc, char *argv[])
 {
-  // 0. preprocess the option
-  // 0.1 show help info
-  if (argc <= 1) {
+  // 0. option accept
+  int opt_valid = 1;
+  while ((opt = getopt(argc, argv, "f:o:")) != -1) {
+    switch (opt) {
+      case 'f':
+        out_fmt = atoi(optarg);
+        break;
+      case 'o':
+        fout = optarg;
+        break;
+      default:
+        opt_valid = 0;
+        break;
+    }
+  }
+
+  // 1. handle options
+  // 1.1 if invalid option
+  if (!opt_valid ||
+      (optind != argc - 1) ||
+      (out_fmt && (out_fmt < 1 || out_fmt > 3))) {
     usage(argv[0]);
     exit(ERR_ARG);
   }
-  // 0.2 check whether the source file path is correct
-  if ((fip = fopen(argv[1], FILE_RD)) == NULL) {
-    fprintf(stderr, "%s: can't open %s, please make sure the pid you typed exists\n", argv[0], argv[1]);
+
+  // 1.2 try to open file
+  if ((fip = fopen(argv[optind], FILE_RD)) == NULL) {
+    fprintf(stderr, "%s: can't open %s, file not found\n", argv[0], argv[optind]);
     exit(ERR_FILE);
   }
 
-  // 1. determine output file format
-  // 1.1 command is not complete
-  if (argc <= 2) {
+  // 1.3 handle '-f' option
+  if (!out_fmt) {
     if(!(out_fmt = get_fmt())) {
       fprintf(stderr, "%s: the option you typed in is incorrect[1/2/3]\n", argv[0]);
       fclose(fip);
       exit(ERR_ARG);
-    }
-  // 1.2 third argument may not correct
-  } else if (argc > 3 || strlen(argv[2]) != 3 || *argv[2] != '-' || *(argv[2] + 1) != 'f') {
-    usage(argv[0]);
-    fclose(fip);
-    exit(ERR_ARG);
-  } else {
-  // then I know the command is entered correctly
-  // 1.3 extract output format from the argument
-    switch (*(argv[2] + 2)) {
-      case '1':
-        out_fmt = OUT_HEXB;
-        break;
-      case '2':
-        out_fmt = OUT_HEX;
-        break;
-      case '3':
-        out_fmt = OUT_BIN;
-        break;
-      default:
-        fprintf(stderr, "%s: the output format you typed in is incorrect[1/2/3]\n", argv[0]);
-        fclose(fip);
-        exit(ERR_ARG);
-        break;
     }
   }
 
@@ -241,12 +238,20 @@ int main(int argc, char *argv[])
 
   // 7. output binary code to specified file
   // 7.1 try to open output file
-  filename_only(argv[1], outname);
-  strcat(outname, out_fmt > 2 ? SUF_BIN : SUF_HEX);
-  if ((fop = fopen(outname, FILE_WRT)) == NULL) {
-    fprintf(stderr, "%s: can't open output file %s please make sure the pid you typed exists\n", argv[0],outname);
-    fclose(fip);
-    exit(ERR_FILE);
+  if (!fout) {
+    filename_only(argv[optind], outname);
+    strcat(outname, out_fmt > 2 ? SUF_BIN : SUF_HEX);
+    if ((fop = fopen(outname, FILE_WRT)) == NULL) {
+      fprintf(stderr, "%s: can't open output file %s\n", argv[0], outname);
+      out_dealloc(out);
+      exit(ERR_FILE);
+    }
+  }else {
+    if ((fop = fopen(fout, FILE_WRT)) == NULL) {
+      fprintf(stderr, "%s: can't open output file %s\n", argv[0], fout);
+      out_dealloc(out);
+      exit(ERR_FILE);
+    }
   }
 
   // 7.2 transform binary code to ascii code
@@ -272,10 +277,6 @@ int main(int argc, char *argv[])
       }
       break;
   }
-
-  // input from stdin
-  // if (argc > 2) {
-  // }
 
   // clean up
   out_dealloc(out);

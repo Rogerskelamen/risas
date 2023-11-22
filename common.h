@@ -21,8 +21,8 @@
 #define ERR_SYNTX 4
 
 // formats of output file
-#define OUT_HEXB  1
-#define OUT_HEX   2
+#define OUT_HEX   1
+#define OUT_HEXB  2
 #define OUT_BIN   3
 
 #endif // !COMMON_H
