@@ -129,11 +129,13 @@ int main(int argc, char *argv[])
         if (tag_ls != NULL) {
           if(tag_append(tag_ls, line, code_cnt + 1)) {
             fprintf(stderr, "%s: tag allocation failed!\n", argv[0]);
+            fclose(fip);
             exit(ERR_ALLOC);
           }
         } else {
           if (tag_alloc(&tag_ls, line, code_cnt + 1)) {
             fprintf(stderr, "%s: tag allocation failed!\n", argv[0]);
+            fclose(fip);
             exit(ERR_ALLOC);
           }
         }
@@ -154,6 +156,8 @@ int main(int argc, char *argv[])
   int  tag_line;
   if ((cinst = (INST *)malloc(sizeof(INST))) == NULL) {
     fprintf(stderr, "%s: memory allocation failed!\n", argv[0]);
+    fclose(fip);
+    tag_dealloc(tag_ls);
     exit(ERR_ALLOC);
   }
   while ((fgets(line, MAX_SIZ, fip)) != NULL) { // TODO: handle the line exceeds MAX_SIZ
@@ -170,6 +174,9 @@ int main(int argc, char *argv[])
           fprintf(stderr, "%s: instruction not found!\n", argv[0]);
           fprintf(stderr, "%d: %s\n", line_cnt, line);
           fprintf(stderr, "      ^\n");
+          fclose(fip);
+          tag_dealloc(tag_ls);
+          free(cinst);
           exit(ERR_SYNTX);
         }
         // 4.2 pre-handle for j and b instruction
@@ -178,6 +185,9 @@ int main(int argc, char *argv[])
           if (!(tag_line = tag_find(tag_ls, tag_name))) {
             fprintf(stderr, "%s: tag not found!\n", argv[0]);
             fprintf(stderr, "%d: %s\n", line_cnt, line);
+            fclose(fip);
+            tag_dealloc(tag_ls);
+            free(cinst);
             exit(ERR_SYNTX);
           }
         }
@@ -185,6 +195,9 @@ int main(int argc, char *argv[])
         if (parse(line, inst_id, &inst_v, (tag_line - code_cnt) * 4)) {
           fprintf(stderr, "%s: syntax error!\n", argv[0]);
           fprintf(stderr, "%d: %s\n", line_cnt, line);
+          fclose(fip);
+          tag_dealloc(tag_ls);
+          free(cinst);
           exit(ERR_SYNTX);
         }
 
@@ -205,6 +218,9 @@ int main(int argc, char *argv[])
         if (decode(&cinstinfo, &binc)) {
           fprintf(stderr, "%s: syntax error!\n", argv[0]);
           fprintf(stderr, "%d: %s\n", line_cnt, line);
+          fclose(fip);
+          tag_dealloc(tag_ls);
+          free(cinst);
           exit(ERR_SYNTX);
         }
         // printf("code = %x\n", binc);
@@ -214,12 +230,18 @@ int main(int argc, char *argv[])
           if (out_create(&out, binc)) {
             out_dealloc(out);
             fprintf(stderr, "%s: memory allocation failed!\n", argv[0]);
+            fclose(fip);
+            tag_dealloc(tag_ls);
+            free(cinst);
             exit(ERR_ALLOC);
           }
         } else {
           if (out_inc(out, binc)) {
             out_dealloc(out);
             fprintf(stderr, "%s: memory allocation failed!\n", argv[0]);
+            fclose(fip);
+            tag_dealloc(tag_ls);
+            free(cinst);
             exit(ERR_ALLOC);
           }
         }
