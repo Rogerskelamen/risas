@@ -9,10 +9,12 @@ LDFLAGS =
 all: $(PROG)
 
 $(PROG): $(OBJ)
-	$(CC) $(LDFLAGS) $^ -o $@
+	@echo + LD $^
+	@$(CC) $(LDFLAGS) $^ -o $@
 
 .c.o:
-	$(CC) -c $(CFLAGS) $<
+	@echo + CC $<
+	@$(CC) -c $(CFLAGS) $<
 
 clean:
 	-rm -f $(OBJ) $(PROG)
