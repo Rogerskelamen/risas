@@ -9,7 +9,7 @@ LDFLAGS =
 all: $(PROG)
 
 $(PROG): $(OBJ)
-	@echo + LD $^
+	@echo + LD "->" $@
 	@$(CC) $(LDFLAGS) $^ -o $@
 
 .c.o:
