@@ -287,7 +287,7 @@ int main(int argc, char *argv[])
       break;
     case OUT_HEX:
       for (int i = 0; i < out->size; i++) {
-        fprintf(fop, "%x\n", out->contents[i]);
+        fprintf(fop, "%08x\n", out->contents[i]);
       }
       break;
     case OUT_HEXB:
