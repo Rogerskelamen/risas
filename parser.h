@@ -4,62 +4,64 @@
 // normal macros
 #define INST_SIZ 16
 
-// instruction type macros
-#define   INST_LB       1
-#define   INST_LH       2
-#define   INST_LW       3
-#define   INST_LBU      4
-#define   INST_LHU      5
-#define   INST_SB       6
-#define   INST_SH       7
-#define   INST_SW       8
-#define   INST_SLL      9
-#define   INST_SLLI     10
-#define   INST_SRL      11
-#define   INST_SRLI     12
-#define   INST_SRA      13
-#define   INST_SRAI     14
-#define   INST_ADD      15
-#define   INST_ADDI     16
-#define   INST_SUB      17
-#define   INST_LUI      18
-#define   INST_AUIPC    19
-#define   INST_XOR      20
-#define   INST_XORI     21
-#define   INST_OR       22
-#define   INST_ORI      23
-#define   INST_AND      24
-#define   INST_ANDI     25
-#define   INST_SLT      26
-#define   INST_SLTI     27
-#define   INST_SLTU     28
-#define   INST_SLTIU    29
-#define   INST_BEQ      30
-#define   INST_BNE      31
-#define   INST_BLT      32
-#define   INST_BGE      33
-#define   INST_BLTU     34
-#define   INST_BGEU     35
-#define   INST_JAL      36
-#define   INST_JALR     37
-#define   INST_CSRRW    38
-#define   INST_CSRRS    39
-#define   INST_CSRRC    40
-#define   INST_CSRRWI   41
-#define   INST_CSRRSI   42
-#define   INST_CSRRCI   43
-#define   INST_NOP      44
+// instruction list
+enum {
+  INST_LB = 1,
+  INST_LH,
+  INST_LW,
+  INST_LBU,
+  INST_LHU,
+  INST_SB,
+  INST_SH,
+  INST_SW,
+  INST_SLL,
+  INST_SLLI,
+  INST_SRL,
+  INST_SRLI,
+  INST_SRA,
+  INST_SRAI,
+  INST_ADD,
+  INST_ADDI,
+  INST_SUB,
+  INST_LUI,
+  INST_AUIPC,
+  INST_XOR,
+  INST_XORI,
+  INST_OR,
+  INST_ORI,
+  INST_AND,
+  INST_ANDI,
+  INST_SLT,
+  INST_SLTI,
+  INST_SLTU,
+  INST_SLTIU,
+  INST_BEQ,
+  INST_BNE,
+  INST_BLT,
+  INST_BGE,
+  INST_BLTU,
+  INST_BGEU,
+  INST_JAL,
+  INST_JALR,
+  INST_CSRRW,
+  INST_CSRRS,
+  INST_CSRRC,
+  INST_CSRRWI,
+  INST_CSRRSI,
+  INST_CSRRCI,
+  INST_NOP
+};
 
-// instruction type macros
-#define TYPE_R 1
-#define TYPE_I 2
-#define TYPE_S 3
-#define TYPE_B 4
-#define TYPE_U 5
-#define TYPE_J 6
-#define TYPE_N 7
-
-#endif // !PARSER_H
+// instruction type list
+enum {
+  TYPE_R = 1,
+  TYPE_I,
+  TYPE_S,
+  TYPE_B,
+  TYPE_U,
+  TYPE_J,
+  TYPE_N
+};
 
 typedef struct {
   char *name;
@@ -93,3 +95,5 @@ int parse_reg(char *code, unsigned short *n);
 int parse_imm(char *code, int *imm);
 void par_show(INSTVAR *v);
 void get_data(int inst_id, INST **inst);
+
+#endif // !PARSER_H

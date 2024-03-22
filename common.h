@@ -25,8 +25,6 @@
 #define OUT_HEXB  2
 #define OUT_BIN   3
 
-#endif // !COMMON_H
-
 void trim(char *);
 int  prep_ln(char *);
 int  istag(char *);
@@ -38,3 +36,5 @@ int  bitspan(int, short, short);
 int  btos(int, char *, short);
 int  getdir(char *, char *);
 int  filename_only(char *, char *);
+
+#endif // !COMMON_H

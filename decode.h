@@ -1,8 +1,6 @@
 #ifndef DECODE_H
 #define DECODE_H
 
-#endif // !DECODE_H
-
 typedef struct {
   char *name;
   int type;
@@ -24,3 +22,5 @@ void dec_b(INSTINFO *inst, int *bincp);
 void dec_u(INSTINFO *inst, int *bincp);
 void dec_j(INSTINFO *inst, int *bincp);
 void dec_n(INSTINFO *inst, int *bincp);
+
+#endif // !DECODE_H
