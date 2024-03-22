@@ -1,4 +1,5 @@
 PROG = risas
+DEST = /usr/local/bin
 SRC  = $(wildcard *.c)
 OBJ  = $(SRC:.c=.o)
 
@@ -20,10 +21,11 @@ clean:
 	-rm -f $(OBJ) $(PROG)
 
 install: all
-	cp $(PROG) /usr/local/bin/
+	@echo $(PROG) "->" $(DEST)
+	@cp $(PROG) $(DEST)
 
 uninstall:
-	rm /usr/local/bin/$(PROG)
+	rm $(DEST)/$(PROG)
 
 count:
 	@find . -type f -name "*.[ch]" | xargs wc -l
