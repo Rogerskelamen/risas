@@ -1,6 +1,8 @@
-*.o
-*.bin
-*.hex
+*
+*/*
+!*/
 
-risas
-test/
+!*.[chS]
+!Makefile
+!README.md
+!LICENSE

@@ -153,7 +153,7 @@ int main(int argc, char *argv[])
 
   // 3. traverse for second time to parse
   char tag_name[MAX_BUFSIZ];
-  int  tag_line;
+  int  tag_line = 0;
   if ((cinst = (INST *)malloc(sizeof(INST))) == NULL) {
     fprintf(stderr, "%s: memory allocation failed!\n", argv[0]);
     fclose(fip);

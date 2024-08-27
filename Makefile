@@ -1,24 +1,30 @@
-PROG = risas
-DEST = /usr/local/bin
-SRC  = $(wildcard *.c)
-OBJ  = $(SRC:.c=.o)
+PROG  = risas
+DEST  = /usr/local/bin
+BUILD_DIR = build
 
-CC = cc
-CFLAGS = -Wall -Werror
+SRCS = $(shell find $(abspath src) -name *.c)
+OBJS = $(addprefix $(BUILD_DIR)/, $(addsuffix .o, $(basename $(SRCS))))
+
+INCFLAGS = -Iinclude
+
+CFLAGS += -Wall -Werror
+CFLAGS += -MMD -O2
+CFLAGS += $(INCFLAGS)
 LDFLAGS =
 
 all: $(PROG)
 
-$(PROG): $(OBJ)
+$(PROG): $(OBJS)
 	@echo + LD "->" $@
 	@$(CC) $(LDFLAGS) $^ -o $@
 
-.c.o:
-	@echo + CC $<
+$(BUILD_DIR)/%.o: %.c
+	@mkdir -p $(dir $@) && echo + CC $<
 	@$(CC) -c $(CFLAGS) $<
 
 clean:
-	-rm -f $(OBJ) $(PROG)
+	-rm -f $(PROG)
+	-rm -rf $(BUILD_DIR)
 
 install: all
 	@echo $(PROG) "->" $(DEST)
