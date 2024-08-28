@@ -2,12 +2,12 @@
  * risas: a simple risc-v assembler to translate
  * rsic-v assembly to binary or hexadecimal machine code
  * @input:
- * risc-v assembly code file(e.g. riscv.s)
+ * risc-v assembly code file(e.g. riscv.S)
  * ISA specification: RISC-V 32I
  * @ouput:
  * - riscv hexadecimal machine code(one byte per line)
  * - riscv hexadecimal machine code(instruction per line)
- * - riscv binary machine code(instruction per line)
+ * - riscv binary machine code(one instruction per line)
  * @flaws:
  * 1. when assembling, pc won't automatically increment for each instruction,
  * which means branch tag is translated to tag_addr - pc
@@ -53,7 +53,7 @@ usage_fmt()
   printf("==== available output file format ====\n");
   printf("- 1: hexadecimal machine code(one instruction per line)\n");
   printf("- 2: hexadecimal machine code(one byte per line)\n");
-  printf("- 3: binary machine code(instruction per line)\n");
+  printf("- 3: binary machine code(one instruction per line)\n");
 }
 
 static void

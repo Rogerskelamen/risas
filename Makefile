@@ -2,7 +2,7 @@ PROG  = risas
 DEST  = /usr/local/bin
 BUILD_DIR = build
 
-SRCS = $(shell find $(abspath src) -name *.c)
+SRCS = $(shell find src -name "*.c")
 OBJS = $(addprefix $(BUILD_DIR)/, $(addsuffix .o, $(basename $(SRCS))))
 
 INCFLAGS = -Iinclude
@@ -20,7 +20,7 @@ $(PROG): $(OBJS)
 
 $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(dir $@) && echo + CC $<
-	@$(CC) -c $(CFLAGS) $<
+	@$(CC) -c $(CFLAGS) $< -o $@
 
 clean:
 	-rm -f $(PROG)
@@ -36,4 +36,4 @@ uninstall:
 count:
 	@find . -type f -name "*.[ch]" | xargs wc -l
 
-.PHONY: all clean count
+.PHONY: all clean count install uninstall
